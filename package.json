@@ -8,6 +8,12 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "prettier": {
+    "arrowParens": "avoid",
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true
+  },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

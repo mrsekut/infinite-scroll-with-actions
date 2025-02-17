@@ -2,8 +2,8 @@
 
 import { Post } from './types';
 
-export async function getInitialPosts(): Promise<Post[]> {
-  return range(10).map(id => ({
+export async function getInitialPosts(startId: number): Promise<Post[]> {
+  return range(startId, startId + 10).map(id => ({
     id,
     text: `Post #${id}`,
   }));
@@ -14,6 +14,21 @@ export async function loadMorePosts(
   size: number,
 ): Promise<Post[]> {
   return range(cursor + 1, cursor + size).map(id => ({
+    id,
+    text: `Post #${id}`,
+  }));
+}
+
+export async function loadPrevPosts(
+  cursor: number,
+  size: number,
+): Promise<Post[]> {
+  if (cursor <= 1) return [];
+
+  const start = cursor - size;
+  const start_ = Math.max(start, 1);
+
+  return range(start_, cursor - 1).map(id => ({
     id,
     text: `Post #${id}`,
   }));

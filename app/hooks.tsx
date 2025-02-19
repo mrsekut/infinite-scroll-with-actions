@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 type UseLoadTopMore<T> = {
   handleLoad: (items: T[]) => void;
@@ -13,7 +13,6 @@ export const useLoadTopMore = <T,>({
 }: UseLoadTopMore<T>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreUp, setHasMoreUp] = useState(true);
-  const ref = useRef<HTMLDivElement | null>(null);
 
   const loadPrev = useCallback(async () => {
     if (isLoading || !hasMoreUp) return;
@@ -47,21 +46,7 @@ export const useLoadTopMore = <T,>({
     }
   }, [isLoading, hasMoreUp, containerRef, getPrev, handleLoad]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        loadPrev();
-      }
-    });
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => observer.disconnect();
-  }, [loadPrev]);
-
-  const Sentinel = () => <div ref={ref} style={{ height: '20px' }} />;
-
-  return { Sentinel, isLoading };
+  return { loadPrev, isLoading };
 };
 
 type LoadMore<T> = {
@@ -72,7 +57,6 @@ type LoadMore<T> = {
 export const useLoadBottomMore = <T,>({ getNext, handleLoad }: LoadMore<T>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const ref = useRef<HTMLDivElement | null>(null);
 
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return;
@@ -91,19 +75,5 @@ export const useLoadBottomMore = <T,>({ getNext, handleLoad }: LoadMore<T>) => {
     }
   }, [isLoading, hasMore, getNext, handleLoad]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        loadMore();
-      }
-    });
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => observer.disconnect();
-  }, [loadMore]);
-
-  const Sentinel = () => <div ref={ref} style={{ height: '20px' }} />;
-
-  return { Sentinel, isLoading };
+  return { loadMore, isLoading };
 };

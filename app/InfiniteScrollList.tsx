@@ -38,9 +38,7 @@ export default function InfiniteScrollList({ initialPosts }: Props) {
       }}
     >
       <Top />
-      {loadingUp && (
-        <p style={{ textAlign: 'center' }}>Loading previous posts...</p>
-      )}
+      {loadingUp && <p style={{ textAlign: 'center' }}>Loading prev...</p>}
       <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
         {posts.map(post => (
           <li
@@ -51,9 +49,7 @@ export default function InfiniteScrollList({ initialPosts }: Props) {
           </li>
         ))}
       </ul>
-      {loadingDown && (
-        <p style={{ textAlign: 'center' }}>Loading more posts...</p>
-      )}
+      {loadingDown && <p style={{ textAlign: 'center' }}>Loading next...</p>}
       <Bottom />
     </div>
   );

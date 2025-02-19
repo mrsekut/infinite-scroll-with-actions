@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { loadPrevPosts, loadMorePosts } from './actions';
 import { Post } from './types';
 import { useScrollTrigger } from './useScrollTrigger';
@@ -13,12 +13,14 @@ type Props = {
 
 export default function InfiniteScrollList({ initialPosts }: Props) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const { loadPrev, isLoading: loadingUp } = useLoadPrev({
+  const {
+    loadPrev,
+    isLoading: loadingUp,
+    containerRef,
+  } = useLoadPrev({
     handleLoad: newPosts => setPosts(prev => [...newPosts, ...prev]),
     getPrev: () => loadPrevPosts(posts[0]?.id ?? 0, 10),
-    containerRef,
   });
   const { loadMore, isLoading: loadingDown } = useLoadMore({
     handleLoad: newPosts => setPosts(prev => [...prev, ...newPosts]),

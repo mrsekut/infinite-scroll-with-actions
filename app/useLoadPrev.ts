@@ -1,18 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 type UseLoadTopMore<T> = {
   handleLoad: (items: T[]) => void;
   getPrev: () => Promise<T[]>;
-  containerRef: React.RefObject<HTMLDivElement | null>;
 };
 
-export const useLoadPrev = <T>({
-  handleLoad,
-  getPrev,
-  containerRef,
-}: UseLoadTopMore<T>) => {
+export const useLoadPrev = <T>({ handleLoad, getPrev }: UseLoadTopMore<T>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreUp, setHasMoreUp] = useState(true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const loadPrev = useCallback(async () => {
     if (isLoading || !hasMoreUp) return;
@@ -46,5 +42,5 @@ export const useLoadPrev = <T>({
     }
   }, [isLoading, hasMoreUp, containerRef, getPrev, handleLoad]);
 
-  return { loadPrev, isLoading };
+  return { loadPrev, isLoading, containerRef };
 };

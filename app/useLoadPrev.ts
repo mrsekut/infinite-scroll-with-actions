@@ -8,15 +8,16 @@ type UseLoadTopMore<T> = {
 export const useLoadPrev = <T>({ handleLoad, getPrev }: UseLoadTopMore<T>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreUp, setHasMoreUp] = useState(true);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   const loadPrev = useCallback(async () => {
     if (isLoading || !hasMoreUp) return;
     setIsLoading(true);
-    if (!containerRef.current) return;
+    if (!ref.current) return;
 
     // Store the current scroll height
-    const previousScrollHeight = containerRef.current.scrollHeight;
+    const previousScrollHeight = ref.current.scrollHeight;
+    const previousScrollTop = ref.current.scrollTop;
 
     try {
       const newItems = await getPrev();
@@ -26,21 +27,22 @@ export const useLoadPrev = <T>({ handleLoad, getPrev }: UseLoadTopMore<T>) => {
       } else {
         handleLoad(newItems);
         // Adjust the scroll position so it doesn't shift when new items are added to the top
-        requestAnimationFrame(() => {
-          if (containerRef.current) {
-            const newScrollHeight = containerRef.current.scrollHeight;
+        const observer = new MutationObserver(() => {
+          if (ref.current) {
+            const newScrollHeight = ref.current.scrollHeight;
             const addedContentHeight = newScrollHeight - previousScrollHeight;
-            containerRef.current.scrollTop =
-              containerRef.current.scrollTop + addedContentHeight;
+            ref.current.scrollTop = previousScrollTop + addedContentHeight;
           }
+          observer.disconnect();
         });
+        observer.observe(ref.current, { childList: true, subtree: true });
       }
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, hasMoreUp, containerRef, getPrev, handleLoad]);
+  }, [isLoading, hasMoreUp, ref, getPrev, handleLoad]);
 
-  return { loadPrev, isLoading, containerRef };
+  return { loadPrev, isLoading, containerRef: ref };
 };

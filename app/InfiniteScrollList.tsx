@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { loadPrevPosts, loadMorePosts } from './actions';
 import { Post } from './types';
-import { useScrollTrigger } from './useScrollTrigger';
 import { useLoadPrev } from './useLoadPrev';
 import { useLoadMore } from './useLoadMore';
+import { ScrollTrigger } from './ScrollTrigger';
 
 type Props = {
   initialPosts: Post[];
@@ -27,9 +27,6 @@ export default function InfiniteScrollList({ initialPosts }: Props) {
     getNext: () => loadMorePosts(posts.at(-1)?.id ?? 0, 10),
   });
 
-  const Top = useScrollTrigger(loadPrev);
-  const Bottom = useScrollTrigger(loadMore);
-
   return (
     <div
       ref={containerRef}
@@ -40,7 +37,7 @@ export default function InfiniteScrollList({ initialPosts }: Props) {
         position: 'relative',
       }}
     >
-      <Top />
+      <ScrollTrigger onTrigger={loadPrev} />
       {loadingUp && <p style={{ textAlign: 'center' }}>Loading prev...</p>}
       <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
         {posts.map(post => (
@@ -53,7 +50,7 @@ export default function InfiniteScrollList({ initialPosts }: Props) {
         ))}
       </ul>
       {loadingDown && <p style={{ textAlign: 'center' }}>Loading next...</p>}
-      <Bottom />
+      <ScrollTrigger onTrigger={loadMore} />
     </div>
   );
 }
